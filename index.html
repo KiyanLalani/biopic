@@ -24,6 +24,7 @@
 {"@context":"https://schema.org","@type":"Person","name":"Kiyan Lalani","jobTitle":"Founder & CEO","worksFor":{"@type":"Organization","name":"Atlas Intelligence","legalName":"Atlas Academic Intelligence Ltd"},"url":"https://kiyanl.co.uk","image":"https://kiyanl.co.uk/og.png","sameAs":["https://www.linkedin.com/in/kiyan-lalani-6a978b258","https://github.com/KiyanLalani"],"alumniOf":{"@type":"School","name":"Reed's School"},"address":{"@type":"PostalAddress","addressLocality":"London","addressCountry":"GB"}}
 </script>
 <script>
+try{var _t=localStorage.getItem('kl-theme'); if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}
 if(location.hostname==='kiyanl.co.uk'||location.hostname.endsWith('.vercel.app')){
   var vs=document.createElement('script');vs.defer=true;vs.src='/_vercel/insights/script.js';document.head.appendChild(vs);
 }
@@ -410,7 +411,8 @@ p{margin:0;}
 .wp-figtag{
   display:inline-block; margin-top:1rem; font-family:var(--mono); font-size:.6rem;
   letter-spacing:.16em; text-transform:uppercase; color:var(--route);
-  border-bottom:1px dashed var(--route); padding-bottom:.25rem;
+  background:none; border:none; border-bottom:1px dashed var(--route);
+  padding:0 0 .25rem; cursor:pointer;
 }
 .wp-figtag i{font-style:normal;}
 .fig-pop{
@@ -442,6 +444,47 @@ p{margin:0;}
 .compass.spin{animation:eggspin 1.6s cubic-bezier(.25,.8,.3,1);}
 @keyframes eggspin{to{transform:rotate(1080deg);}}
 
+/* ============ CHROME EXTRAS ============ */
+.skip-link{
+  position:fixed; top:10px; left:10px; z-index:100; background:var(--route); color:#fff;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  padding:.75rem 1.1rem; text-decoration:none; transform:translateY(-250%); transition:transform .2s ease;
+}
+.skip-link:focus{transform:none;}
+.topbar-right{display:flex; align-items:center; gap:1.5rem;}
+.theme-btn{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase;
+  background:none; border:none; padding:0; color:var(--muted); cursor:pointer;
+}
+.theme-btn:hover{color:var(--route);}
+.btns .btn:nth-child(3){transform:rotate(-.7deg);}
+.btns .btn:hover{transform:rotate(0) translateY(-3px);}
+
+/* ============ INSET MAP ============ */
+.route-map{
+  display:none; background:var(--card); border:1px solid var(--line);
+  padding:10px 10px 4px; box-shadow:0 18px 44px rgba(0,0,0,.22);
+}
+.route--h .route-map{
+  display:block; position:absolute; top:9vh; right:clamp(1rem,3vw,2.5rem);
+  width:clamp(150px,15vw,200px); z-index:6;
+}
+@media(max-width:1080px){.route--h .route-map{display:none;}}
+.route:not(.route--h) .route-map{display:block; width:min(220px,68vw); margin:0 auto 2.4rem;}
+.route-map svg{display:block; width:100%; height:auto; background:var(--bg);}
+.map-grat{stroke:var(--gridline);}
+.map-thames{stroke:var(--sea); stroke-width:1.4; opacity:.55;}
+.map-under{stroke:var(--sea); stroke-width:1; stroke-dasharray:2 5; opacity:.5;}
+.map-ink{stroke:var(--route); stroke-width:1.8;}
+.map-next{stroke:var(--route); stroke-width:1; stroke-dasharray:2 4; opacity:.5;}
+.map-dot{fill:var(--bg); stroke:var(--muted); stroke-width:1.4; transition:stroke .3s ease, fill .3s ease;}
+.map-dot.on{stroke:var(--route); fill:var(--route);}
+.map-label-t{font-family:var(--mono); font-size:7px; letter-spacing:.12em; fill:var(--muted);}
+.map-cap{
+  display:block; font-family:var(--mono); font-size:.52rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); text-align:center; padding:.55rem 0 .4rem;
+}
+
 /* ============ REDUCED MOTION ============ */
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -449,15 +492,54 @@ p{margin:0;}
   .js .hero-line .ch,.js .hero-dot,.js .hero-meta,.js .hero-sub,.js .sw .wi,
   .rv,.prose p,.eyebrow-rule{opacity:1!important; transform:none!important;}
 }
+
+/* ============ PRINT ============ */
+@media print{
+  .routebar,.topbar,.skip-link,.compass,.marquee,.hero-canvas,.hero-cue,.hero-corner,
+  .route-map,.route-svg,.route-readout,.fig-pop,.egg-toast,.wp-figtag{display:none!important;}
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --bg:#fff; --bg2:#fff; --card:#fff; --ink:#111; --muted:#444;
+    --line:#bbb; --gridline:transparent; --route:#b03018; --sea:#33667F; --route-soft:transparent;
+  }
+  body{background:#fff; font-size:.92rem;}
+  .hero{min-height:0; padding:1.5rem 0 1rem;}
+  .hero-title{font-size:3.4rem;}
+  .hero-inner{opacity:1!important;}
+  .hero-line,.hero-line .ch,.js .hero-line .ch{transform:none!important;}
+  .js .hero-dot,.js .hero-meta,.js .hero-sub{opacity:1!important; transform:none!important;}
+  .rv,.prose p,.sw .wi,.js .sw .wi{opacity:1!important; transform:none!important;}
+  .eyebrow-rule{transform:none!important;}
+  .plate,.quote-band{padding:1.4rem 0; border-color:#ccc;}
+  .plate-title{font-size:2.2rem;}
+  .bigquote{font-size:1.4rem;}
+  .route{background:none;}
+  .route--h{height:auto!important;}
+  .route--h .route-sticky,.route-sticky{position:static; height:auto; overflow:visible; padding:1.4rem 0;}
+  .route-head,.route-title{padding:0;}
+  .route--h .route-track,.route-track{display:block; width:auto!important; padding:0; transform:none!important;}
+  .route--h .wp,.wp{width:auto; max-width:none; margin:0 0 .9rem!important; break-inside:avoid;}
+  .cards,.chips,.board{display:block;}
+  .card,.chip{margin-bottom:.9rem; break-inside:avoid;}
+  .slot{border:none; padding:.25rem 0; break-inside:avoid;}
+  .row{break-inside:avoid;}
+  .btns .btn{border:none; padding:0; transform:none; display:block; margin-bottom:.4rem;}
+  a{color:inherit; text-decoration:none;}
+  .contact-title{font-size:2.6rem;}
+  .contact-title .ln2{margin-left:0; display:inline;}
+}
 </style>
 </head>
 <body>
 <!-- fixed chrome -->
 <div class="routebar" aria-hidden="true"><div class="routebar-fill" id="routefill"></div></div>
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="topbar" id="topbar">
   <span>K·L · An Atlas</span>
-  <span class="topbar-co">51°25′N · 0°13′W · London</span>
-  <a href="#contact">Contact</a>
+  <span class="topbar-co" id="topbarCo" aria-hidden="true">51°25′N · 0°13′W · London</span>
+  <span class="topbar-right">
+    <button class="theme-btn" id="themeBtn" type="button">☾ Night</button>
+    <a href="#contact">Contact</a>
+  </span>
 </header>
 
 <svg class="compass" viewBox="0 0 80 80" aria-hidden="true">
@@ -471,7 +553,7 @@ p{margin:0;}
   <circle cx="40" cy="40" r="2.6" fill="var(--ink)"/>
 </svg>
 
-<main>
+<main id="main">
   <!-- ============ FRONTISPIECE ============ -->
   <section class="hero" id="hero">
     <canvas class="hero-canvas" id="contours" aria-hidden="true"></canvas>
@@ -565,9 +647,13 @@ p{margin:0;}
     <div class="route-sticky">
       <div class="route-head">
         <span><b>Plate III</b> · The Route So Far</span>
-        <span class="route-readout" id="readout">Waypoint 01 / 07</span>
+        <span class="route-readout" id="readout" aria-live="polite">Waypoint 01 / 07</span>
       </div>
       <h2 class="route-title">The route so far</h2>
+      <div class="route-map" aria-hidden="true">
+        <svg id="mapSvg" viewBox="0 0 200 370"></svg>
+        <span class="map-cap">Inset · the route, plotted</span>
+      </div>
       <div class="route-track" id="track">
         <svg class="route-svg" id="routeSvg" aria-hidden="true"></svg>
         <article class="wp">
@@ -605,7 +691,7 @@ p{margin:0;}
           <h3>The Black Door</h3>
           <span class="wp-date">2025–26</span>
           <p>Photographed outside No. 10, the same address a policy white paper he contributed to would later reach.</p>
-          <span class="wp-figtag"><i>✦</i> Fig. 1 · the photograph</span>
+          <button class="wp-figtag" type="button" aria-expanded="false" aria-controls="figPop"><i>✦</i> Fig. 1 · the photograph</button>
         </article>
         <article class="wp">
           <div class="wp-top"><span class="wp-idx">07</span><span class="wp-coord">Coordinates<br>unplotted</span></div>
@@ -696,6 +782,7 @@ p{margin:0;}
       <div class="btns">
         <a class="btn rv" style="--i:0" href="mailto:kiyan@atlasintel.co.uk"><i>✦</i> kiyan@atlasintel.co.uk</a>
         <a class="btn rv" style="--i:1" href="https://www.linkedin.com/in/kiyan-lalani-6a978b258" target="_blank" rel="noopener"><i>✦</i> LinkedIn ↗</a>
+        <a class="btn rv" style="--i:2" href="/cv.pdf"><i>✦</i> The full chart · CV</a>
       </div>
     </div>
   </section>
@@ -719,6 +806,25 @@ p{margin:0;}
 var doc=document.documentElement;
 doc.classList.add('js');
 var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- theme toggle ---------- */
+var themeBtn=document.getElementById('themeBtn');
+var sysDark=window.matchMedia('(prefers-color-scheme: dark)');
+function curTheme(){return doc.dataset.theme||(sysDark.matches?'dark':'light');}
+function themeMeta(){
+  var bg=getComputedStyle(doc).getPropertyValue('--bg').trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute('content',bg);});
+}
+function themeLabel(){themeBtn.textContent=curTheme()==='dark'?'☀ Day chart':'☾ Night passage';}
+themeBtn.addEventListener('click',function(){
+  var next=curTheme()==='dark'?'light':'dark';
+  doc.dataset.theme=next;
+  try{localStorage.setItem('kl-theme',next);}catch(e){}
+  themeLabel(); themeMeta();
+});
+sysDark.addEventListener('change',function(){if(!doc.dataset.theme)themeLabel();});
+themeLabel();
+if(doc.dataset.theme)themeMeta();
 
 /* ---------- hero letter split ---------- */
 document.querySelectorAll('.hero-line').forEach(function(line){
@@ -880,6 +986,80 @@ function setupRoute(){
   lastIdx=-1;
 }
 
+/* ---------- inset map (real geography, equirectangular) ---------- */
+var mapSvg=document.getElementById('mapSvg'), mapInk=null, mapInkLen=0, mapDots=[];
+function buildMap(){
+  if(!mapSvg) return;
+  var W=200,H=370,ns='http://www.w3.org/2000/svg';
+  var lon0=-0.62,lon1=0.38,lat0=51.20,lat1=52.32;
+  function px(lon,lat){return [(lon-lon0)/(lon1-lon0)*W, H-(lat-lat0)/(lat1-lat0)*H];}
+  function el(n,attrs){var e=document.createElementNS(ns,n);for(var k in attrs)e.setAttribute(k,attrs[k]);mapSvg.appendChild(e);return e;}
+  mapSvg.innerHTML=''; mapDots=[];
+  for(var lo=-0.5;lo<=0.26;lo+=0.25){var g=px(lo,lat0);el('line',{x1:g[0],y1:0,x2:g[0],y2:H,'class':'map-grat'});}
+  for(var la=51.25;la<=52.26;la+=0.25){var g2=px(lon0,la);el('line',{x1:0,y1:g2[1],x2:W,y2:g2[1],'class':'map-grat'});}
+  var thames=[[-0.62,51.44],[-0.49,51.39],[-0.42,51.44],[-0.31,51.40],[-0.24,51.46],[-0.12,51.50],[-0.02,51.50],[0.10,51.47],[0.22,51.50],[0.38,51.47]];
+  el('path',{d:'M'+thames.map(function(q){var p=px(q[0],q[1]);return p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' L '),'class':'map-thames',fill:'none'});
+  var geo=[[-0.400,51.317],[-0.217,51.417],[-0.120,51.505],[0.117,52.205],[-0.125,51.499],[-0.128,51.503]];
+  var pts=geo.map(function(q){return px(q[0],q[1]);});
+  var d='M'+pts.map(function(p){return p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' L ');
+  el('path',{d:d,'class':'map-under',fill:'none'});
+  mapInk=el('path',{d:d,'class':'map-ink',fill:'none'});
+  mapInkLen=mapInk.getTotalLength();
+  mapInk.style.strokeDasharray=mapInkLen;
+  mapInk.style.strokeDashoffset=reduced?0:mapInkLen;
+  var last=pts[pts.length-1], off=px(0.35,52.29);
+  el('path',{d:'M'+last[0].toFixed(1)+' '+last[1].toFixed(1)+' L '+off[0].toFixed(1)+' '+off[1].toFixed(1),'class':'map-next',fill:'none'});
+  pts.forEach(function(p){mapDots.push(el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:3.2,'class':'map-dot'+(reduced?' on':'')}));});
+  var t1=el('text',{x:px(0.117,52.205)[0]-6,y:px(0.117,52.205)[1]+2,'class':'map-label-t','text-anchor':'end'});t1.textContent='CAMBRIDGE';
+  var t2=el('text',{x:px(-0.125,51.52)[0]+7,y:px(-0.125,51.52)[1]-4,'class':'map-label-t'});t2.textContent='LONDON';
+  var t3=el('text',{x:px(-0.400,51.317)[0]+7,y:px(-0.400,51.317)[1]+11,'class':'map-label-t'});t3.textContent='COBHAM';
+}
+
+/* ---------- drifting coordinates ---------- */
+var coordEl=document.getElementById('topbarCo'), coordAnchors=[], lastCoordStr='';
+function setupCoords(){
+  var plates=document.querySelectorAll('.plate');
+  if(!coordEl||plates.length<5||!routeSec) return;
+  var LDN=[51.417,-0.217,'London'], COB=[51.317,-0.400,'Cobham, Surrey'],
+      CAM=[52.205,0.117,'Cambridge'], WST=[51.500,-0.125,'Westminster'];
+  function a(y,p){coordAnchors.push([y,p[0],p[1],p[2]]);}
+  coordAnchors=[];
+  a(0,LDN);
+  a(plates[0].offsetTop,COB);
+  a(plates[1].offsetTop,LDN);
+  a(routeSec.offsetTop,COB);
+  a(routeSec.offsetTop+routeSec.offsetHeight*0.55,CAM);
+  a(routeSec.offsetTop+routeSec.offsetHeight,WST);
+  a(plates[2].offsetTop+300,WST);
+  a(plates[3].offsetTop,LDN);
+  a(Math.max(doc.scrollHeight-window.innerHeight,plates[4].offsetTop),LDN);
+}
+function fmtDM(v,pos,neg){
+  var av=Math.abs(v),d=Math.floor(av),m=Math.round((av-d)*60);
+  if(m===60){d++;m=0;}
+  return d+'°'+(m<10?'0':'')+m+'′'+(v>=0?pos:neg);
+}
+function updateChrome(y){
+  if(!coordEl||coordAnchors.length<2) return;
+  var probe=y+window.innerHeight*0.35, n=coordAnchors.length, i=0;
+  while(i<n-2&&probe>coordAnchors[i+1][0]) i++;
+  var A=coordAnchors[i],B=coordAnchors[i+1];
+  var t=Math.min(1,Math.max(0,(probe-A[0])/Math.max(1,B[0]-A[0])));
+  var lat=A[1]+(B[1]-A[1])*t, lon=A[2]+(B[2]-A[2])*t;
+  var label=t<.5?A[3]:B[3];
+  var str=fmtDM(lat,'N','S')+' · '+fmtDM(lon,'E','W')+' · '+label;
+  if(str!==lastCoordStr){coordEl.textContent=str; lastCoordStr=str;}
+  if(mapInk&&!reduced&&routeSec){
+    var total=Math.max(1,routeSec.offsetHeight-(routeOn?window.innerHeight:0));
+    var rpm=routeOn
+      ? Math.min(1,Math.max(0,(y-routeSec.offsetTop)/total))
+      : Math.min(1,Math.max(0,(y+window.innerHeight*0.6-routeSec.offsetTop)/Math.max(1,routeSec.offsetHeight)));
+    mapInk.style.strokeDashoffset=mapInkLen*(1-rpm);
+    var on=Math.round(rpm*(mapDots.length-1));
+    mapDots.forEach(function(dt,di){dt.classList.toggle('on',di<=on&&rpm>0.02);});
+  }
+}
+
 /* ---------- master scroll loop ---------- */
 var fill=document.getElementById('routefill'),
     needle=document.getElementById('needle'),
@@ -899,6 +1079,7 @@ function loop(now){
   var p=max>0?Math.min(1,y/max):0;
   fill.style.transform='scaleX('+p+')';
   topbar.classList.toggle('scrolled',y>40);
+  updateChrome(y);
 
   if(!reduced){
     needle.style.transform='rotate('+(p*540)+'deg)';
@@ -947,19 +1128,28 @@ if(!reduced&&window.matchMedia('(pointer:fine)').matches){
 var rszT;
 window.addEventListener('resize',function(){
   clearTimeout(rszT);
-  rszT=setTimeout(function(){sizeCanvas(); if(reduced)drawContours(0); setupRoute();},150);
+  rszT=setTimeout(function(){sizeCanvas(); if(reduced)drawContours(0); setupRoute(); setupCoords();},150);
 });
-setupRoute();
-window.addEventListener('load',setupRoute);
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setupRoute);
+buildMap();
+function layoutAll(){setupRoute(); setupCoords();}
+layoutAll();
+window.addEventListener('load',layoutAll);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(layoutAll);
 
 /* ---------- fig. 1 hover reveal ---------- */
 var no10=document.getElementById('wpNo10'), figPop=document.getElementById('figPop');
+var figBtn=no10?no10.querySelector('.wp-figtag'):null;
+function setFig(show){
+  figPop.classList.toggle('show',show);
+  figPop.setAttribute('aria-hidden',show?'false':'true');
+  if(figBtn)figBtn.setAttribute('aria-expanded',show?'true':'false');
+}
 if(no10&&figPop){
-  no10.addEventListener('pointerenter',function(e){if(e.pointerType!=='touch')figPop.classList.add('show');});
-  no10.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')figPop.classList.remove('show');});
-  no10.addEventListener('click',function(){figPop.classList.toggle('show');});
-  document.addEventListener('click',function(e){if(!no10.contains(e.target))figPop.classList.remove('show');});
+  no10.addEventListener('pointerenter',function(e){if(e.pointerType!=='touch')setFig(true);});
+  no10.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')setFig(false);});
+  no10.addEventListener('click',function(){setFig(!figPop.classList.contains('show'));});
+  document.addEventListener('click',function(e){if(!no10.contains(e.target))setFig(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setFig(false);});
 }
 
 /* ---------- easter egg: type "atlas" ---------- */
