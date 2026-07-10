@@ -12,7 +12,22 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://kiyanl.co.uk">
 <link rel="canonical" href="https://kiyanl.co.uk">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+<meta property="og:image" content="https://kiyanl.co.uk/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kiyanl.co.uk/og.png">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Kiyan Lalani","jobTitle":"Founder & CEO","worksFor":{"@type":"Organization","name":"Atlas Intelligence","legalName":"Atlas Academic Intelligence Ltd"},"url":"https://kiyanl.co.uk","image":"https://kiyanl.co.uk/og.png","sameAs":["https://www.linkedin.com/in/kiyan-lalani-6a978b258","https://github.com/KiyanLalani"],"alumniOf":{"@type":"School","name":"Reed's School"},"address":{"@type":"PostalAddress","addressLocality":"London","addressCountry":"GB"}}
+</script>
+<script>
+if(location.hostname==='kiyanl.co.uk'||location.hostname.endsWith('.vercel.app')){
+  var vs=document.createElement('script');vs.defer=true;vs.src='/_vercel/insights/script.js';document.head.appendChild(vs);
+}
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;}
 body{margin:0;padding:0;}
@@ -391,6 +406,42 @@ p{margin:0;}
   font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
 }
 
+/* ============ FIGURE (hover reveal on waypoint 06) ============ */
+.wp-figtag{
+  display:inline-block; margin-top:1rem; font-family:var(--mono); font-size:.6rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--route);
+  border-bottom:1px dashed var(--route); padding-bottom:.25rem;
+}
+.wp-figtag i{font-style:normal;}
+.fig-pop{
+  position:fixed; right:clamp(1rem,6vw,5rem); top:50%; z-index:65;
+  width:min(280px,64vw); pointer-events:none;
+  opacity:0; transform:translateY(-46%) rotate(3deg) scale(.93);
+  transition:opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.fig-pop.show{opacity:1; transform:translateY(-50%) rotate(2.5deg) scale(1);}
+.fig-pop figure{
+  margin:0; background:var(--card); border:1px solid var(--line); padding:10px 10px 12px;
+  box-shadow:0 24px 60px rgba(0,0,0,.38);
+}
+.fig-pop img{display:block; width:100%; height:auto;}
+.fig-pop figcaption{
+  font-family:var(--mono); font-size:.56rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); text-align:center; padding-top:.7rem;
+}
+
+/* ============ EASTER EGG ============ */
+.egg-toast{
+  position:fixed; left:50%; bottom:1.6rem; transform:translate(-50%,20px); opacity:0; z-index:70;
+  background:var(--card); border:1px solid var(--route); color:var(--ink);
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase;
+  padding:.85rem 1.3rem; transition:all .4s cubic-bezier(.2,.7,.2,1); pointer-events:none;
+  text-align:center; max-width:92vw;
+}
+.egg-toast.show{opacity:1; transform:translate(-50%,0);}
+.compass.spin{animation:eggspin 1.6s cubic-bezier(.25,.8,.3,1);}
+@keyframes eggspin{to{transform:rotate(1080deg);}}
+
 /* ============ REDUCED MOTION ============ */
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -549,11 +600,12 @@ p{margin:0;}
           <span class="wp-date">2025–26</span>
           <p>Invited to the House of Lords as Atlas gains traction, an experience he calls <span class="q">“surreal and incredibly rewarding.”</span></p>
         </article>
-        <article class="wp">
+        <article class="wp" id="wpNo10">
           <div class="wp-top"><span class="wp-idx">06</span><span class="wp-coord">51°30′N 0°07′W<br>Downing Street</span></div>
           <h3>The Black Door</h3>
           <span class="wp-date">2025–26</span>
           <p>Photographed outside No. 10, the same address a policy white paper he contributed to would later reach.</p>
+          <span class="wp-figtag"><i>✦</i> Fig. 1 · the photograph</span>
         </article>
         <article class="wp">
           <div class="wp-top"><span class="wp-idx">07</span><span class="wp-coord">Coordinates<br>unplotted</span></div>
@@ -648,6 +700,13 @@ p{margin:0;}
     </div>
   </section>
 </main>
+
+<div class="fig-pop" id="figPop" aria-hidden="true">
+  <figure>
+    <img src="/downing-street.jpg" alt="Kiyan Lalani holding a white paper outside 10 Downing Street" width="1000" height="1333" loading="lazy">
+    <figcaption>Fig. 1 · Outside No. 10 · 51°30′N 0°07′W</figcaption>
+  </figure>
+</div>
 
 <footer class="colophon">
   <span>An atlas of Kiyan Lalani · charted July 2026, London</span>
@@ -893,6 +952,35 @@ window.addEventListener('resize',function(){
 setupRoute();
 window.addEventListener('load',setupRoute);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setupRoute);
+
+/* ---------- fig. 1 hover reveal ---------- */
+var no10=document.getElementById('wpNo10'), figPop=document.getElementById('figPop');
+if(no10&&figPop){
+  no10.addEventListener('pointerenter',function(e){if(e.pointerType!=='touch')figPop.classList.add('show');});
+  no10.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')figPop.classList.remove('show');});
+  no10.addEventListener('click',function(){figPop.classList.toggle('show');});
+  document.addEventListener('click',function(e){if(!no10.contains(e.target))figPop.classList.remove('show');});
+}
+
+/* ---------- easter egg: type "atlas" ---------- */
+var eggBuf='';
+window.addEventListener('keydown',function(e){
+  if(e.key.length!==1||e.metaKey||e.ctrlKey||e.altKey) return;
+  var t=e.target.tagName; if(t==='INPUT'||t==='TEXTAREA') return;
+  eggBuf=(eggBuf+e.key.toLowerCase()).slice(-5);
+  if(eggBuf!=='atlas') return;
+  eggBuf='';
+  var c=document.querySelector('.compass');
+  if(c&&!reduced){c.classList.remove('spin'); void c.offsetWidth; c.classList.add('spin');}
+  var toast=document.getElementById('eggToast');
+  if(!toast){
+    toast=document.createElement('div'); toast.id='eggToast'; toast.className='egg-toast';
+    toast.setAttribute('role','status'); document.body.appendChild(toast);
+  }
+  toast.textContent='SECRET BEARING FOUND · 51°25′N 0°13′W · THANKS FOR EXPLORING';
+  toast.classList.add('show');
+  clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove('show');},4200);
+});
 })();
 </script>
 </body>
