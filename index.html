@@ -1191,6 +1191,7 @@ window.addEventListener('keydown',function(e){
   toast.textContent='SECRET BEARING FOUND · 51°25′N 0°13′W · THANKS FOR EXPLORING';
   toast.classList.add('show');
   clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove('show');},4200);
+  e.preventDefault();
   openAtlasPin();
 });
 })();
