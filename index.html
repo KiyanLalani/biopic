@@ -32,6 +32,9 @@ if(location.hostname==='kiyanl.co.uk'||location.hostname.endsWith('.vercel.app')
 <style>
 *,*::before,*::after{box-sizing:border-box;}
 body{margin:0;padding:0;}
+
+.atlas-pin-dialog{width:min(390px,calc(100vw - 40px));padding:30px;background:var(--bg,#ECEFE6);color:var(--ink,#0B141C);border:1px solid currentColor;border-radius:2px;box-shadow:0 20px 80px #0005}.atlas-pin-dialog::backdrop{background:#071019aa;backdrop-filter:blur(5px)}.atlas-pin-dialog h2{font-family:Georgia,serif;font-size:28px;margin:10px 0}.atlas-pin-dialog p{font-family:monospace;font-size:11px;letter-spacing:1px}.atlas-pin-dialog input{width:100%;padding:13px;margin:15px 0;background:transparent;border:1px solid currentColor;color:inherit;font:24px monospace;letter-spacing:12px;text-align:center}.atlas-pin-actions{display:flex;justify-content:space-between;gap:20px}.atlas-pin-actions button{font:11px monospace;padding:10px 15px;cursor:pointer;background:transparent;color:inherit;border:1px solid currentColor}.atlas-pin-actions button[type=submit]{background:#0B141C;color:#ECEFE6}.atlas-pin-error{min-height:18px;letter-spacing:0!important}
+
 </style>
 <style>
 /* ============ TOKENS — day chart / night passage ============ */
@@ -1152,6 +1155,24 @@ if(no10&&figPop){
   document.addEventListener('keydown',function(e){if(e.key==='Escape')setFig(false);});
 }
 
+
+function openAtlasPin(){
+ var dialog=document.getElementById('atlasPinDialog');
+ var input=document.getElementById('atlasPinInput');
+ var error=document.getElementById('atlasPinError');
+ input.value='';error.textContent='';dialog.showModal();input.focus();
+ if(dialog.dataset.bound)return;
+ dialog.dataset.bound='1';
+ document.getElementById('atlasPinCancel').onclick=function(){dialog.close();};
+ document.getElementById('atlasPinForm').onsubmit=function(e){
+  e.preventDefault();
+  if(input.value==='1590'){
+   sessionStorage.setItem('atlas-vault-unlocked','1');
+   window.location.assign('/atlas-vault/');
+  }else{error.textContent='Incorrect PIN. Try again.';input.value='';input.focus();}
+ };
+}
+
 /* ---------- easter egg: type "atlas" ---------- */
 var eggBuf='';
 window.addEventListener('keydown',function(e){
@@ -1170,8 +1191,10 @@ window.addEventListener('keydown',function(e){
   toast.textContent='SECRET BEARING FOUND · 51°25′N 0°13′W · THANKS FOR EXPLORING';
   toast.classList.add('show');
   clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove('show');},4200);
+  openAtlasPin();
 });
 })();
 </script>
+<dialog id="atlasPinDialog" class="atlas-pin-dialog" aria-labelledby="atlasPinTitle"><form id="atlasPinForm"><p>SECRET BEARING FOUND</p><h2 id="atlasPinTitle">Enter the access PIN.</h2><input id="atlasPinInput" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" aria-label="Four-digit access PIN" required><p id="atlasPinError" class="atlas-pin-error" role="status"></p><div class="atlas-pin-actions"><button id="atlasPinCancel" type="button">CANCEL</button><button type="submit">CONTINUE ↗</button></div></form></dialog>
 </body>
 </html>

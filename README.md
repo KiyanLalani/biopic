@@ -29,3 +29,7 @@ Then open http://localhost:4173. Deployed on Vercel; pushes to `main` go live au
 ## License
 
 Code is MIT. The text, photographs and personal content are not licensed for reuse.
+
+## Hidden portfolio
+
+Type `atlas` outside an input to open the PIN dialog. The configured PIN opens `/atlas-vault/`, while `/` retains the original portfolio. This is an Easter egg with a browser-session gate, not authentication. The hidden pages are marked noindex.
