@@ -64,7 +64,7 @@ export function onWidthResize(callback) {
   };
   window.addEventListener("resize", schedule, { passive: true });
   window.visualViewport?.addEventListener("resize", schedule, { passive: true });
-  window.addEventListener("pageshow", schedule);
+  window.addEventListener("pageshow", (event) => { if (event.persisted) schedule(); });
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

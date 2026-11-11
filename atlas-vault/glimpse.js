@@ -4208,6 +4208,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 onWidthResize(() => {
+  if (!visit || leaving) return;
   cancelAnimationFrame(frame);
   frame = 0;
   closeNow();
