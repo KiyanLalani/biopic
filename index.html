@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ECEFE6">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B141C">
 <title>Kiyan Lalani · Founder & CEO, Atlas Intelligence</title>
@@ -33,7 +33,23 @@ if(location.hostname==='kiyanl.co.uk'||location.hostname.endsWith('.vercel.app')
 *,*::before,*::after{box-sizing:border-box;}
 body{margin:0;padding:0;}
 
-.atlas-pin-dialog{width:min(390px,calc(100vw - 40px));padding:30px;background:var(--bg,#ECEFE6);color:var(--ink,#0B141C);border:1px solid currentColor;border-radius:2px;box-shadow:0 20px 80px #0005}.atlas-pin-dialog::backdrop{background:#071019aa;backdrop-filter:blur(5px)}.atlas-pin-dialog h2{font-family:Georgia,serif;font-size:28px;margin:10px 0}.atlas-pin-dialog p{font-family:monospace;font-size:11px;letter-spacing:1px}.atlas-pin-dialog input{width:100%;padding:13px;margin:15px 0;background:transparent;border:1px solid currentColor;color:inherit;font:24px monospace;letter-spacing:12px;text-align:center}.atlas-pin-actions{display:flex;justify-content:space-between;gap:20px}.atlas-pin-actions button{font:11px monospace;padding:10px 15px;cursor:pointer;background:transparent;color:inherit;border:1px solid currentColor}.atlas-pin-actions button[type=submit]{background:#0B141C;color:#ECEFE6}.atlas-pin-error{min-height:18px;letter-spacing:0!important}
+/* Touch entrance and PIN sheet share the site's chart palette. */
+.secret-bearing-trigger{font:inherit;letter-spacing:inherit;text-transform:inherit;background:none;border:0;color:inherit;cursor:pointer;min-width:44px;min-height:44px;padding:8px 0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.secret-bearing-trigger:hover{color:var(--route)}
+.secret-bearing-trigger:focus-visible{outline:2px solid var(--route);outline-offset:4px}
+.colophon .secret-bearing-trigger{color:var(--route);text-align:left;white-space:nowrap}
+.atlas-pin-dialog{box-sizing:border-box;position:fixed;inset:auto 0 auto;top:calc(var(--atlas-vv-top,0px) + var(--atlas-vv-height,100dvh) / 2);transform:translateY(-50%);margin:0 auto;width:min(390px,calc(100% - 32px));max-height:calc(var(--atlas-vv-height,100dvh) - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:clamp(20px,5vw,30px);background:var(--bg,#ECEFE6);color:var(--ink,#0B141C);border:1px solid currentColor;border-radius:2px;box-shadow:0 20px 80px #0005}
+.atlas-pin-dialog::backdrop{background:#071019aa;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+.atlas-pin-dialog h2{font-family:Georgia,serif;font-size:clamp(24px,5vw,28px);line-height:1.2;margin:10px 0}
+.atlas-pin-dialog p{font-family:monospace;font-size:11px;line-height:1.5;letter-spacing:1px}
+.atlas-pin-dialog input{width:100%;min-height:54px;padding:13px;margin:15px 0;background:transparent;border:1px solid currentColor;border-radius:0;color:inherit;font:24px monospace;letter-spacing:12px;text-align:center;-webkit-appearance:none}
+.atlas-pin-dialog input:focus-visible{outline:2px solid var(--route);outline-offset:3px}
+.atlas-pin-actions{display:flex;justify-content:space-between;gap:16px}
+.atlas-pin-actions button{font:12px monospace;min-height:44px;padding:10px 15px;cursor:pointer;background:transparent;color:inherit;border:1px solid currentColor;touch-action:manipulation}
+.atlas-pin-actions button[type=submit]{background:var(--ink,#0B141C);color:var(--bg,#ECEFE6)}
+.atlas-pin-error{min-height:18px;letter-spacing:0!important}
+@media(max-width:760px){header.topbar{padding-top:max(4px,env(safe-area-inset-top,0px));padding-left:max(1rem,env(safe-area-inset-left,0px));padding-right:max(1rem,env(safe-area-inset-right,0px))}.topbar .topbar-right{gap:clamp(8px,3vw,20px)}.topbar-right a,.theme-btn{min-height:44px;display:inline-flex;align-items:center}footer.colophon{flex-wrap:wrap;gap:12px;padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}}
+@media print{.secret-bearing-trigger,.atlas-pin-dialog{display:none!important}}
 
 </style>
 <style>
@@ -537,7 +553,7 @@ p{margin:0;}
 <div class="routebar" aria-hidden="true"><div class="routebar-fill" id="routefill"></div></div>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="topbar" id="topbar">
-  <span>K·L · An Atlas</span>
+  <button class="secret-bearing-trigger" type="button" data-atlas-secret aria-label="Open secret bearing" aria-haspopup="dialog" aria-controls="atlasPinDialog">K·L · An Atlas</button>
   <span class="topbar-co" id="topbarCo" aria-hidden="true">51°25′N · 0°13′W · London</span>
   <span class="topbar-right">
     <button class="theme-btn" id="themeBtn" type="button">☾ Night</button>
@@ -799,6 +815,7 @@ p{margin:0;}
 </div>
 
 <footer class="colophon">
+  <button class="secret-bearing-trigger" type="button" data-atlas-secret aria-haspopup="dialog" aria-controls="atlasPinDialog">✦ Secret bearing</button>
   <span>An atlas of Kiyan Lalani · charted July 2026, London</span>
   <span>Discipline over motivation · 51°25′N 0°13′W</span>
 </footer>
@@ -1156,22 +1173,37 @@ if(no10&&figPop){
 }
 
 
+var atlasReturnFocus=null;
+function updateAtlasViewport(){
+ var viewport=window.visualViewport;
+ doc.style.setProperty('--atlas-vv-height',(viewport?viewport.height:window.innerHeight)+'px');
+ doc.style.setProperty('--atlas-vv-top',(viewport?viewport.offsetTop:0)+'px');
+}
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',updateAtlasViewport);
+ window.visualViewport.addEventListener('scroll',updateAtlasViewport);
+}
+window.addEventListener('resize',updateAtlasViewport);
 function openAtlasPin(){
  var dialog=document.getElementById('atlasPinDialog');
+ if(!dialog||dialog.open)return;
  var input=document.getElementById('atlasPinInput');
  var error=document.getElementById('atlasPinError');
- input.value='';error.textContent='';dialog.showModal();input.focus();
+ atlasReturnFocus=document.activeElement;
+ input.value='';error.textContent='';updateAtlasViewport();dialog.showModal();input.focus({preventScroll:true});
  if(dialog.dataset.bound)return;
  dialog.dataset.bound='1';
+ dialog.addEventListener('close',function(){if(atlasReturnFocus&&atlasReturnFocus.focus)atlasReturnFocus.focus({preventScroll:true});});
  document.getElementById('atlasPinCancel').onclick=function(){dialog.close();};
  document.getElementById('atlasPinForm').onsubmit=function(e){
   e.preventDefault();
   if(input.value==='1590'){
    sessionStorage.setItem('atlas-vault-unlocked','1');
    window.location.assign('/atlas-vault/');
-  }else{error.textContent='Incorrect PIN. Try again.';input.value='';input.focus();}
+  }else{error.textContent='Incorrect PIN. Try again.';input.value='';input.focus({preventScroll:true});}
  };
 }
+document.querySelectorAll('[data-atlas-secret]').forEach(function(trigger){trigger.addEventListener('click',openAtlasPin);});
 
 /* ---------- easter egg: type "atlas" ---------- */
 var eggBuf='';
@@ -1196,6 +1228,6 @@ window.addEventListener('keydown',function(e){
 });
 })();
 </script>
-<dialog id="atlasPinDialog" class="atlas-pin-dialog" aria-labelledby="atlasPinTitle"><form id="atlasPinForm"><p>SECRET BEARING FOUND</p><h2 id="atlasPinTitle">Enter the access PIN.</h2><input id="atlasPinInput" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" aria-label="Four-digit access PIN" required><p id="atlasPinError" class="atlas-pin-error" role="status"></p><div class="atlas-pin-actions"><button id="atlasPinCancel" type="button">CANCEL</button><button type="submit">CONTINUE ↗</button></div></form></dialog>
+<dialog id="atlasPinDialog" class="atlas-pin-dialog" aria-labelledby="atlasPinTitle"><form id="atlasPinForm"><p>SECRET BEARING FOUND</p><h2 id="atlasPinTitle">Enter the access PIN.</h2><input id="atlasPinInput" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-describedby="atlasPinError" aria-label="Four-digit access PIN" required><p id="atlasPinError" class="atlas-pin-error" role="status"></p><div class="atlas-pin-actions"><button id="atlasPinCancel" type="button">CANCEL</button><button type="submit">CONTINUE ↗</button></div></form></dialog>
 </body>
 </html>

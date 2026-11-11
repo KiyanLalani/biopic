@@ -52,16 +52,19 @@ export function fitCanvas(canvas) {
 }
 
 export function onWidthResize(callback) {
-  let width = window.innerWidth;
-  let height = window.innerHeight;
   let frame = 0;
-  window.addEventListener("resize", () => {
-    if (window.innerWidth === width && Math.abs(window.innerHeight - height) < 120) return;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(callback);
-  });
+  let timer = 0;
+  const schedule = () => {
+    if (window.visualViewport && window.visualViewport.scale !== 1) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(callback);
+    }, 100);
+  };
+  window.addEventListener("resize", schedule, { passive: true });
+  window.visualViewport?.addEventListener("resize", schedule, { passive: true });
+  window.addEventListener("pageshow", schedule);
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

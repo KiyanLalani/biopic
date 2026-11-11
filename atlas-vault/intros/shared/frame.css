@@ -215,3 +215,10 @@ button {
     bottom: 12px;
   }
 }
+
+/* Safari safe areas and dynamic viewport, including folding and rotation. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (max-width: 1100px), (pointer: coarse) {
+  .stage { height: 100dvh; min-height: 260px; }
+  a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+}

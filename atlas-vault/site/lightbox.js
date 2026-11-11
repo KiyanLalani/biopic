@@ -51,6 +51,16 @@ export function createLightbox({ onOpen = () => {} } = {}) {
   root.setAttribute("role", "dialog");
   root.setAttribute("aria-modal", "true");
   const back = make("div", "lb-back");
+  const closeButton = make("button", "lb-close", "Close ×");
+  const previousButton = make("button", "lb-prev", "← Previous");
+  const nextButton = make("button", "lb-next", "Next →");
+  for (const button of [closeButton, previousButton, nextButton]) button.type = "button";
+  closeButton.setAttribute("aria-label", "Close image viewer");
+  previousButton.setAttribute("aria-label", "Previous image");
+  nextButton.setAttribute("aria-label", "Next image");
+  const safeArea = make("div");
+  safeArea.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)";
+
   const stage = make("div", "lb-stage");
   const img = make("img", "lb-img");
   img.alt = "";
@@ -65,7 +75,7 @@ export function createLightbox({ onOpen = () => {} } = {}) {
   const left = make("span");
   const right = make("span");
   cap.append(left, right);
-  root.append(back, stage, cap);
+  root.append(back, stage, cap, previousButton, nextButton, closeButton, safeArea);
   document.body.append(root);
 
   let s = null;
@@ -86,20 +96,40 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     );
   }
 
+  function viewport() {
+    const visual = window.visualViewport;
+    const style = getComputedStyle(safeArea);
+    return {
+      x: visual?.offsetLeft || 0, y: visual?.offsetTop || 0,
+      w: visual?.width || innerWidth, h: visual?.height || innerHeight,
+      top: parseFloat(style.paddingTop) || 0, right: parseFloat(style.paddingRight) || 0,
+      bottom: parseFloat(style.paddingBottom) || 0, left: parseFloat(style.paddingLeft) || 0,
+    };
+  }
+
   function fit(w, h, capped = true) {
-    const phone = narrow.matches;
+    const v = viewport();
+    const phone = narrow.matches || matchMedia("(pointer: coarse)").matches;
     const padX = phone ? 12 : 24;
-    const top = phone ? 56 : 28;
-    const bottom = phone ? 56 : 44;
-    const maxW = innerWidth - 2 * padX;
-    const maxH = innerHeight - top - bottom;
+    const top = v.top + 64;
+    const bottom = v.bottom + (phone ? 88 : 76);
+    const maxW = Math.max(1, v.w - v.left - v.right - 2 * padX);
+    const maxH = Math.max(1, v.h - top - bottom);
     const k = Math.min(maxW / w, maxH / h, capped ? 1 : Infinity);
-    const bw = Math.round(w * k);
-    const bh = Math.round(h * k);
-    return { x: Math.round((innerWidth - bw) / 2), y: Math.round(top + (maxH - bh) / 2), w: bw, h: bh };
+    const bw = Math.max(1, Math.round(w * k));
+    const bh = Math.max(1, Math.round(h * k));
+    return { x: Math.round(v.x + v.left + padX + (maxW - bw) / 2), y: Math.round(v.y + top + (maxH - bh) / 2), w: bw, h: bh };
   }
 
   function place() {
+    const v = viewport();
+    closeButton.style.top = `${v.y + v.top + 8}px`;
+    closeButton.style.right = `${Math.max(0, innerWidth - v.x - v.w) + v.right + 12}px`;
+    previousButton.style.left = `${v.x + v.left + 12}px`;
+    nextButton.style.right = closeButton.style.right;
+    const bottom = `${Math.max(0, innerHeight - v.y - v.h) + v.bottom + 10}px`;
+    previousButton.style.bottom = bottom;
+    nextButton.style.bottom = bottom;
     const b = s.box;
     stage.style.width = `${b.w}px`;
     stage.style.height = `${b.h}px`;
@@ -113,6 +143,7 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     fill(left, [...item.left, ...(narrow.matches || !s.exact ? [] : [[` · ${s.size[0]}×${s.size[1]}`]])]);
     fill(right, item.right);
     root.setAttribute("aria-label", item.alt || "image");
+    previousButton.hidden = nextButton.hidden = s.items.length < 2;
   }
 
   function decode(src) {
@@ -277,17 +308,31 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     return seen(rect) ? contain(rect, ...state.size) : null;
   }
 
+  function focusable() {
+    return [...root.querySelectorAll("button:not([hidden]):not([disabled]), [href], [tabindex='0']")]
+      .filter((node) => node.getClientRects().length > 0);
+  }
+
+  function keepFocus(event) {
+    if (s && !root.hidden && !root.contains(event.target)) closeButton.focus({ preventScroll: true });
+  }
+
   function onKey(event) {
     if (!s || event.ctrlKey || event.metaKey || event.altKey) return;
     const item = s.items[s.at];
     event.stopImmediatePropagation();
-    if (event.key === "Escape") close();
+    if (event.key === "Tab") {
+      const buttons = focusable();
+      const at = buttons.indexOf(document.activeElement);
+      const next = at < 0 ? (event.shiftKey ? buttons.length - 1 : 0) : (at + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length;
+      (buttons[next] || closeButton).focus({ preventScroll: true });
+    } else if (event.key === "Escape") close();
+    else if ((event.key === "Enter" || event.key === " ") && document.activeElement?.closest("button")) return;
     else if (event.key === "ArrowRight" || event.key === "l") step(1);
     else if (event.key === "ArrowLeft" || event.key === "h") step(-1);
     else if (event.key === "Enter") item.apply ? apply() : close();
     else if (event.key === " ") toggleFilm();
-    else if (event.key === "Tab") root.focus();
-    else if (event.key.length !== 1) return;
+    else return;
     event.preventDefault();
   }
 
@@ -295,6 +340,7 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     if (!s?.box) return;
     s.box = fit(...s.size);
     place();
+    caption();
   }
 
   root.addEventListener("click", (event) => {
@@ -304,6 +350,9 @@ export function createLightbox({ onOpen = () => {} } = {}) {
       return;
     }
     const target = event.target;
+    if (target.closest(".lb-close")) return close();
+    if (target.closest(".lb-prev")) return step(-1);
+    if (target.closest(".lb-next")) return step(1);
     if (target.closest(".lb-apply")) return apply();
     if (target.closest(".lb-play")) return toggleFilm();
     if (target.closest(".lb-film")) return toggleFilm();
@@ -365,7 +414,10 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     root.hidden = false;
     addEventListener("keydown", onKey, true);
     addEventListener("resize", onResize);
-    root.focus({ preventScroll: true });
+    window.visualViewport?.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("scroll", onResize);
+    document.addEventListener("focusin", keepFocus);
+    closeButton.focus({ preventScroll: true });
     const rect = from(mine, index);
     if (reduced.matches) return true;
     if (!rect) {
@@ -385,6 +437,9 @@ export function createLightbox({ onOpen = () => {} } = {}) {
     s = null;
     removeEventListener("keydown", onKey, true);
     removeEventListener("resize", onResize);
+    window.visualViewport?.removeEventListener("resize", onResize);
+    window.visualViewport?.removeEventListener("scroll", onResize);
+    document.removeEventListener("focusin", keepFocus);
     document.documentElement.classList.remove("is-zoomed");
     const time = stopFilm(state);
     const done = () => {

@@ -322,3 +322,20 @@ body {
     right: 8px;
   }
 }
+
+/* Keep the reference's canvas, with usable controls on either phone display. */
+@media (max-width: 1100px) and (pointer: coarse), (max-width: 700px) {
+  .brand { left: max(16px, env(safe-area-inset-left)) !important; top: max(8px, env(safe-area-inset-top)) !important; min-height: 44px; }
+  .switch.is-solo { top: max(8px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)) !important; }
+  .switch.is-solo a { min-width: 44px; min-height: 44px; }
+  .brand::after, .enter::after, .switch.is-solo a::after { display: none; }
+  .enter, .theme-key { top: auto !important; bottom: max(20px, env(safe-area-inset-bottom)) !important; min-height: 48px; padding: 12px 16px; font-size: 14px; line-height: 24px; }
+  .enter { left: auto !important; right: max(16px, env(safe-area-inset-right)); display: inline-flex; align-items: center; }
+  .theme-key { left: max(16px, env(safe-area-inset-left)) !important; }
+  .note { display: none; }
+}
+.touch-theme-dialog { width: min(380px, calc(100vw - 40px)); max-height: calc(100dvh - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow: auto; border: 1px solid var(--dim); background: var(--bg); color: var(--ink); padding: 24px; font: 14px/1.6 "Plex Mono", monospace; }
+.touch-theme-dialog::backdrop { background: rgb(0 0 0 / .7); }
+.touch-theme-dialog label { display: block; margin-bottom: 12px; }
+.touch-theme-dialog select { width: 100%; font: 16px/1.5 "Plex Mono", monospace; padding: 12px; min-height: 48px; background: var(--bg); color: var(--ink); border: 1px solid var(--dim); }
+.touch-theme-dialog button { display: block; margin: 20px 0 0 auto; min-width: 80px; min-height: 48px; background: var(--ink); color: var(--bg); border: 0; padding: 8px 16px; }

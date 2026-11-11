@@ -3870,7 +3870,7 @@ window.addEventListener("pointerdown", (event) => {
   pointer.y = event.clientY;
   pointer.lastMove = now;
   pointer.inside = true;
-  askTilt();
+  // Navigation taps do not request iOS motion access.
   if (event.target === wallCanvas && wall && !leaving && !drag) {
     const pane = paneNear(Math.floor(event.clientX / CELL_W));
     pane.scroll.target = pane.scroll.value;
@@ -3912,7 +3912,7 @@ wallCanvas.addEventListener("click", (event) => {
 window.addEventListener(
   "wheel",
   (event) => {
-    if (!wall || leaving || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    if (event.target.closest?.("dialog") || !wall || leaving || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
     if (boot.active) finishBoot();
     if (picker) {
       event.preventDefault();
@@ -4093,8 +4093,43 @@ async function leave(href) {
   window.location.href = href;
 }
 
+let touchThemeDialog = null;
+function openTouchThemes() {
+  if (!visit) return;
+  if (!touchThemeDialog) {
+    touchThemeDialog = document.createElement("dialog");
+    touchThemeDialog.className = "touch-theme-dialog";
+    touchThemeDialog.setAttribute("aria-label", "Choose a colour theme");
+    const form = document.createElement("form");
+    form.method = "dialog";
+    const label = document.createElement("label");
+    label.htmlFor = "touch-theme-select";
+    label.textContent = "Colour theme";
+    const select = document.createElement("select");
+    select.id = "touch-theme-select";
+    for (const theme of visit.themes) {
+      const option = document.createElement("option");
+      option.value = theme.name;
+      option.textContent = theme.name;
+      select.append(option);
+    }
+    select.addEventListener("change", () => {
+      const theme = visit.themes.find(item => item.name === select.value);
+      if (theme) { useTheme(theme); renderWall(); }
+    });
+    const done = document.createElement("button");
+    done.textContent = "Done";
+    form.append(label, select, done);
+    touchThemeDialog.append(form);
+    document.body.append(touchThemeDialog);
+    touchThemeDialog.addEventListener("close", () => themeKey.focus({ preventScroll: true }));
+  }
+  touchThemeDialog.querySelector("select").value = visit.theme.name;
+  touchThemeDialog.showModal();
+}
 themeKey?.addEventListener("click", (event) => {
   event.preventDefault();
+  if (matchMedia("(pointer: coarse)").matches) { openTouchThemes(); return; }
   if (picker) closePicker(true);
   else openPicker();
 });
@@ -4106,7 +4141,7 @@ enterLink?.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.defaultPrevented) return;
+  if (event.defaultPrevented || event.target.closest?.("dialog, select, input, textarea")) return;
   if (boot.active && event.key !== "Enter") finishBoot();
   const active = document.activeElement;
   const free = !active || active === document.body || active === document.documentElement;

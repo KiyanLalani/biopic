@@ -543,7 +543,7 @@ function textOf(entry) {
 function barView(entry) {
   if (entry.kind === "project") {
     const p = entry.data;
-    return [["STARS", fmt(p.stars)], ["FORKS", fmt(p.forks ?? 0)], ["WATCH", fmt(p.watchers ?? 0)]];
+    return [["PROJECT", p.repo.split("-")[0]], ["TYPE", p.language || "Portfolio"]];
   }
   if (entry.kind === "themes") return [["THEMES", String(themes.length)], ["IN OMARCHY", String(themes.filter((theme) => theme.included).length)]];
   if (entry.kind === "more") return [["PROJECTS", String(childrenOf("more").length)]];
